@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.special
+import matplotlib.pyplot as plt
 
 class neuralNetwork:
     def __init__(self, inputNodes, hiddenNodes, outputNodes, learningRate):
@@ -40,11 +41,33 @@ class neuralNetwork:
 
         return finalOutputs
 
-inputNodes = 3
-hiddenNodes = 3
-outputNodes = 3
+inputNodes = 784
+hiddenNodes = 100
+outputNodes = 10
 
 learningRate = 0.3
 
 n = neuralNetwork(inputNodes, hiddenNodes, outputNodes, learningRate)
-print(n.query([1, 0.5, -1.5]))
+
+trainingDataFile = open("MNIST_Data/mnist_train_100.csv", 'r')
+trainingDataList = trainingDataFile.readlines()
+trainingDataFile.close()
+
+for record in trainingDataList:
+    allValues = record.split(',')
+    inputs = (np.asfarray(allValues[1:]) / 255.0 * 0.99) + 0.01
+    targets = np.zeros(outputNodes)+0.01
+    targets[int(allValues[0])] = 0.99
+    n.train(inputs, targets)
+    pass
+
+testDataFile = open("MNIST_Data/mnist_test_10.csv", 'r')
+testDataList = testDataFile.readlines()
+testDataFile.close()
+
+allValues = testDataList[0].split(',')
+iamgeArray = np.asfarray(allValues[1:]).reshape((28,28))
+plt.imshow(iamgeArray, cmap="Greys", interpolation='None')
+plt.show()
+
+print(allValues[0])
